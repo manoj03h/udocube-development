@@ -93,9 +93,9 @@ const Header: React.FC = () => {
                     {/* Menu button */}
                     <div className='block relative z-40 cursor-pointer md:hidden' onClick={handleMenuOpen}>
                         <div className='w-12 h-12'>
-                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "rotate-45 translate-y-[0.1px]" : ""}`}></span>
+                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "rotate-45 translate-y-[0.2px]" : ""}`}></span>
                             <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[0px] transition-opacity duration-300 ease-in-out ${isMenuOpen ? "opacity-0" : ""}`}></span>
-                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "-rotate-45 translate-y-[-0px]" : ""}`}></span>
+                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "-rotate-45 translate-y-[-0.2px]" : ""}`}></span>
                         </div>
                     </div>
                 </div>
