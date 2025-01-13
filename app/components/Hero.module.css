@@ -1,0 +1,40 @@
+/* 
+  sm	640px
+  md	768px
+  lg	1024px
+  xl	1280px
+  2xl	1536px
+*/
+
+.heroSection {
+    background-image: url('/images/heroBg.jpg'); /* Use a relative path from the `public` folder */
+    background-size: cover; /* Ensures the image covers the section */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents tiling */
+    min-height: 30vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    color: white; /* Adjust text color if necessary */
+  }
+
+  @media(max-width: 640px) {
+    .heroSection {
+      background-image: none;
+      background-color: #000;
+    }
+  }
+  @media(max-width: 768px) {
+    .heroSection {
+      background-image: none;
+      background-color: #000;
+    }
+  }
+  @media(max-width: 1024px) {
+    .heroSection {
+      background-image: none;
+      background-color: #000;
+    }
+  }
+
