@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect,  useRef } from 'react';
 import Image from "next/image";
 import styles from './Hero.module.css';
 import { FaFacebook, FaInstagram, FaYoutube, FaTwitter, FaLinkedin } from 'react-icons/fa';
@@ -7,6 +7,9 @@ import Link from 'next/link';
 
 const Header: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    const navRef = useRef<HTMLDivElement>(null); // Ref for the navbar
 
     // Navigation list items
     const navListItems = [
@@ -31,6 +34,35 @@ const Header: React.FC = () => {
     const handleMenuOpen = () => {
         setIsMenuOpen(prev => !prev); // Toggle the menu state
     };
+
+    useEffect(() => {
+        const handleScroll = () => {
+          if (window.scrollY > 50) { // Adjust scroll threshold as needed
+            setIsScrolled(true);
+          } else {
+            setIsScrolled(false);
+          }
+        };
+    
+        window.addEventListener("scroll", handleScroll);
+    
+        return () => {
+          window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (navRef.current && !navRef.current.contains(event.target as Node)) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     // Navbar contents component
     const NavbarContents = () => {
@@ -66,7 +98,7 @@ const Header: React.FC = () => {
 
     return (
         <main>
-            <section className={`${styles.heroSection}`}>
+            <section className={`fixed top-0 left-0 right-0 z-50 min-w-[460px] transition-colors duration-300 ease-in-out ${isMenuOpen || isScrolled ? 'bg-black shadow-lg' : 'bg-transparent'}`}>
                 <div className='relative z-40 flex gap-8 h-[86px] w-full px-10 items-center justify-between '>
                     <Link href='/' className="relative z-40 object-contain">
                         <Image
@@ -98,18 +130,6 @@ const Header: React.FC = () => {
                             <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "-rotate-45 translate-y-[-10px]" : ""}`}></span>
                         </div>
                     </div>
-                </div>
-
-                <div className="h-full w-full flex flex-col justify-start mt-20 px-14 pb-40">
-                    <p className='text-2xl font-bold'>We</p>
-                    <p className='text-5xl font-bold mb-2'>Grow your</p>
-                    <p className='text-5xl font-black mb-4 text-yellow-400'>BUSINESS </p>
-                    <p className='text-lg font-thin mb-10'>by bringing your Business<br />
-                        Online </p>
-                    <Link
-                        className='px-8 py-2 rounded-[30px] w-48 bg-white text-black font-semibold text-lg text-center'
-                        href="/"
-                    >Know More</Link>
                 </div>
             </section>
         </main>
