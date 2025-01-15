@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect,  useRef } from 'react';
 import Image from "next/image";
-import styles from './Hero.module.css';
 import { FaFacebook, FaInstagram, FaYoutube, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import Link from 'next/link';
 
