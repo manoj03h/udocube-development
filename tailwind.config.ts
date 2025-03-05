@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontSize: {
+        'fluid-text-xl': 'clamp(2rem, 50vw, 7rem)', // Define a custom fluid text size
+      },
       screens: {
         'xs': '480px',
         // => @media (min-width: 640px) { ... }
