@@ -36,7 +36,7 @@ const Header: React.FC = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-          if (window.scrollY > 50) { // Adjust scroll threshold as needed
+          if (window.scrollY > 20) { // Adjust scroll threshold as needed
             setIsScrolled(true);
           } else {
             setIsScrolled(false);
@@ -66,14 +66,15 @@ const Header: React.FC = () => {
     // Navbar contents component
     const NavbarContents = () => {
         const listItems = navListItems.map((item, index) => (
-            <li key={index} className='flex flex-col justify-center items-center px-1 h-full w-full md:w-auto lg:px-2 xl:px-4 hover:bg-green-600'>
+            <li key={index} className='flex flex-col justify-center items-center px-1 h-full w-full md:w-auto lg:px-2 xl:px-4 hover:bg-green-600 hover:text-white transition-all duration-300'>
                 <a className='w-full py-4 md:px-2 lg:py-4 text-center' href={item.link}>
                     {item.name}
                 </a>
+                
             </li>
         ));
         return (    
-            <ul className='flex flex-col justify-center items-center gap-1 px-0 bg-white text-red-600 md:flex-row md:justify-center md:items-center md:h-full md:text-white md:bg-transparent md:gap-0'>
+            <ul className='flex flex-col justify-center items-center gap-1 px-0 bg-white text-green-600 md:flex-row md:justify-center md:items-center md:h-full md:text-white md:bg-transparent md:gap-0 shadow-md pb-8'>
                 {listItems}
             </ul>
         );
