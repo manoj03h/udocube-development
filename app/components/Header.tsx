@@ -13,7 +13,15 @@ const Header: React.FC = () => {
     // Navigation list items
     const navListItems = [
         { link: "/", name: "Home" },
-        { link: "/services", name: "OUR SERVICES" },
+        { link: "/services", name: "OUR SERVICES",
+            dropdownItems: [
+                {itemName: "Digital Marketing", itemLink: "/services/digitakMarketing"},
+                {itemName: "Web Designing", itemLink: "/services/webDesigning"},
+                {itemName: "Web Development", itemLink: "/services/webDevelopment"},
+                {itemName: "App Development", itemLink: "/services/appDevelopment"},
+                {itemName: "Graphics Designing", itemLink: "/services/graphiicsDesigning"},
+                {itemName: "Video Editing", itemLink: "/services/videoEditing"},
+            ]},
         { link: "/blog", name: "BLOG" },
         { link: "/portfolio", name: "PORTFOLIO" },
         { link: "/about", name: "ABOUT US" },
@@ -36,18 +44,23 @@ const Header: React.FC = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-          if (window.scrollY > 20) { // Adjust scroll threshold as needed
+          if (window.scrollY > 20 || window.innerHeight < 20) { // Adjust scroll threshold as needed
             setIsScrolled(true);
           } else {
             setIsScrolled(false);
           }
         };
     
-        window.addEventListener("scroll", handleScroll);
-    
-        return () => {
-          window.removeEventListener("scroll", handleScroll);
-        };
+        const timeoutId = setTimeout(() => {
+            console.log("Checking scroll position after delay"); // Debugging line
+            handleScroll();
+          }, 1);
+        
+          window.addEventListener("scroll", handleScroll);
+          return () => {
+            clearTimeout(timeoutId);
+            window.removeEventListener("scroll", handleScroll);
+          };
     }, []);
 
     useEffect(() => {
@@ -66,15 +79,22 @@ const Header: React.FC = () => {
     // Navbar contents component
     const NavbarContents = () => {
         const listItems = navListItems.map((item, index) => (
-            <li key={index} className='flex flex-col justify-center items-center px-1 h-full w-full md:w-auto lg:px-2 xl:px-4 hover:bg-green-600 hover:text-white transition-all duration-300'>
-                <a className='w-full py-4 md:px-2 lg:py-4 text-center' href={item.link}>
+            <li key={index} className='relative group flex flex-col justify-center items-center px-1 h-full w-full md:w-auto lg:px-2 xl:px-4 hover:bg-green-600 hover:text-white transition-all duration-300'>
+                <Link className='relative w-full py-4 md:px-2 lg:py-4 text-center' href={item.link}>
                     {item.name}
-                </a>
-                
+                </Link>
+                <ul className='absolute w-[280px] top-12 md:top-20 z-10 hidden !bg-slate-100 shadow-md rounded-sm group-hover:block group-hover:bg-white group-hover:text-gray-800'>
+                    {item.dropdownItems?.map((dropddownItem, index) => (
+                        <li key={index} className='text-slate-800 hover:bg-slate-800 hover:text-white'>
+                            <Link
+                                className='block px-8 py-4 w-full'
+                                href={dropddownItem.itemLink}>{dropddownItem.itemName}</Link></li>
+                    ))}
+                </ul>
             </li>
         ));
         return (    
-            <ul className='flex flex-col justify-center items-center gap-1 px-0 bg-white text-green-600 md:flex-row md:justify-center md:items-center md:h-full md:text-white md:bg-transparent md:gap-0 shadow-md pb-8'>
+            <ul className='flex flex-col justify-center items-center gap-1 px-0 bg-white text-green-600 md:flex-row md:justify-center md:items-center md:h-full md:text-white md:bg-transparent md:gap-0 shadow-md'>
                 {listItems}
             </ul>
         );
@@ -99,7 +119,7 @@ const Header: React.FC = () => {
     return (
         <main>
             <section className={`fixed top-0 left-0 right-0 z-50 min-w-[460px] transition-colors duration-300 ease-in-out ${isMenuOpen || isScrolled ? 'bg-black shadow-lg' : 'bg-transparent'}`}>
-                <div className='relative z-40 flex gap-8 h-[86px] w-full px-10 items-center justify-between '>
+                <div className='relative z-40 flex gap-8 h-[86px] w-full px-10 items-center justify-between'>
                     <Link href='/' className="relative z-40 object-contain">
                         <Image
                             className="object-contain max-w-[150px]"
@@ -110,9 +130,14 @@ const Header: React.FC = () => {
                             priority
                         />
                     </Link>
+
+                    {/* ---------- This is height sapcing of navabe for hero section ------------- */}
+
                     <div className=' absolute top-0 left-0 right-0 bottom-0 z-30'></div>
-                    {/* Adjusted NavbarContents positioning and z-index */}
-                    <div className={`absolute top-full left-0 z-10 w-full pb-10 transform transition-all duration-300 ease-in-out opacity-0 ${!isMenuOpen ? '-translate-y-full opacity-0 md:opacity-100 md:translate-y-0' : 'translate-y-0 opacity-100'} md:relative md:top-0 md:z-40 md:items-center md:h-full md:w-auto md:pb-0 md:text-xs md:px-1 xl:px-8 xl:text-[0.9rem]`}>
+
+                    {/* ---------- Adjusted NavbarContents positioning and z-index ------------- */}
+
+                    <div className={`absolute top-full left-0 z-10 w-full pb-10 transform transition-all duration-300 ease-in-out opacity-0 ${!isMenuOpen ? '-translate-y-full opacity-0 md:opacity-100 md:translate-y-0' : 'translate-y-0 opacity-100'} md:relative md:top-0 md:z-40 md:justify-center md:items-center md:h-full md:w-auto md:pb-0 md:text-xs md:px-1 xl:px-8 xl:text-[0.9rem]`}>
                         <NavbarContents />
                     </div>
 

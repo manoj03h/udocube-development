@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="relative min-h-full w-full flex flex-col justify-start">
+    <main className="relative min-h-full w-full flex flex-col justify-start min-w-[480px]">
       <div className="relative block w-full">
           <Image
             className="object-contain z-10 w-full h-auto"
@@ -42,10 +42,10 @@ export default function Home() {
           </div>
       </div>
       <div className="flex flex-col row-start-2 justify-center items-center sm:items-start">
-        <div className="h-full w-full xs:flex-col sm:flex md:flex md:flex-row justify-center items-center py-20 px-16">        
+        <div className="flex h-full w-full flex-col md:flex-row justify-center items-center py-20 px-16">        
           
           {/* Intro Section ================================== */}
-          <div className='relative overflow-hidden w-[25%] h-[500px] mr-10 rounded-lg'>
+          <div className='relative overflow-hidden w-full h-[300px] md:w-[75%] md:h-[500px] mr-10 rounded-lg mb-10'>
             <Image 
               className="object-cover rounded-lg w-full h-full"
               src="/images/home/intro.jpg"
@@ -57,7 +57,7 @@ export default function Home() {
           </div>
 
           {/* What We Do Section ================================== */}
-          <div className='relative overflow-hidden w-[50%] h-auto mr-10 rounded-lg pb-8'>
+          <div className='relative overflow-hidden w-full h-auto mr-10 rounded-lg pb-8'>
             {/* <p className='text-2xl font-bold text-black'>We</p> */}
             <p className='text-5xl font-bold text-black mb-8'>Grow your <span className='text-5xl font-black mb-4 text-yellow-400'>BUSINESS</span></p>
             <p className='text-sm font-thin mb-10 text-black text-justify'>Welcome to UFOCube, your trusted partner in driving business growth and innovation in Jamshedpur and beyond! Located in the heart of Jamshedpur, we are a dynamic team of creative minds, tech enthusiasts, and business strategists dedicated to helping businesses thrive in today&apos;s competitive landscape. At UFOCube, we believe in the power of innovation, technology, and tailored solutions to transform your vision into reality.
