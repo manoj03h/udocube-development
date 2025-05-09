@@ -1,163 +1,227 @@
 'use client'
 import React, { useState, useEffect,  useRef } from 'react';
 import Image from "next/image";
-import { FaFacebook, FaInstagram, FaYoutube, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaYoutube, FaTwitter, FaLinkedin, FaTimes, FaBars } from 'react-icons/fa';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const Header: React.FC = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isNavVisible, setIsNavVisible] = useState(false);
+    const [activeDropdownIndex, setActiveDropdownIndex] = useState(null);
 
-    const navRef = useRef<HTMLDivElement>(null); // Ref for the navbar
-
-    // Navigation list items
-    const navListItems = [
-        { link: "/", name: "Home" },
-        { link: "/services", name: "OUR SERVICES",
-            dropdownItems: [
-                {itemName: "Digital Marketing", itemLink: "/services/digitakMarketing"},
-                {itemName: "Web Designing", itemLink: "/services/webDesigning"},
-                {itemName: "Web Development", itemLink: "/services/webDevelopment"},
-                {itemName: "App Development", itemLink: "/services/appDevelopment"},
-                {itemName: "Graphics Designing", itemLink: "/services/graphiicsDesigning"},
-                {itemName: "Video Editing", itemLink: "/services/videoEditing"},
-            ]},
-        { link: "/blog", name: "BLOG" },
-        { link: "/portfolio", name: "PORTFOLIO" },
-        { link: "/about", name: "ABOUT US" },
-        { link: "/contact", name: "CONTACT US" }
-    ];
-
-    // Social icons
-    const socialIcons = [
-        { name: 'Facebook', link: 'https://www.facebook.com/ufocube', icon: <FaFacebook size={36} className='md:h-6 md:w-6'/> },
-        { name: 'Instagram', link: 'https://www.instagram.com/ufocube03', icon: <FaInstagram size={36} className='md:h-6 md:w-6' /> },
-        { name: 'YouTube', link: 'https://www.youtube.com/@ufocube3', icon: <FaYoutube size={36} className='md:h-6 md:w-6' /> },
-        { name: 'Twitter', link: 'https://x.com/ufocube03', icon: <FaTwitter size={36} className='md:h-6 md:w-6' /> },
-        { name: 'LinkedIn', link: 'https://x.com/ufocube03', icon: <FaLinkedin size={36} className='md:h-6 md:w-6' /> }
-    ];
-
-    // Handle menu toggle
-    const handleMenuOpen = () => {
-        setIsMenuOpen(prev => !prev); // Toggle the menu state
-    };
+    const pathname = usePathname();
 
     useEffect(() => {
-        const handleScroll = () => {
-          if (window.scrollY > 20 || window.innerHeight < 20) { // Adjust scroll threshold as needed
-            setIsScrolled(true);
-          } else {
-            setIsScrolled(false);
-          }
-        };
-    
-        const timeoutId = setTimeout(() => {
-            console.log("Checking scroll position after delay"); // Debugging line
-            handleScroll();
-          }, 1);
-        
-          window.addEventListener("scroll", handleScroll);
-          return () => {
-            clearTimeout(timeoutId);
-            window.removeEventListener("scroll", handleScroll);
-          };
+        const handleScroll = () => setIsScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (navRef.current && !navRef.current.contains(event.target as Node)) {
-                setIsMenuOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        const handleResize = () => setIsNavVisible(window.innerWidth >= 1024);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // Navbar contents component
-    const NavbarContents = () => {
-        const listItems = navListItems.map((item, index) => (
-            <li key={index} className='relative group flex flex-col justify-center items-center px-1 h-full w-full md:w-auto lg:px-2 xl:px-4 hover:bg-green-600 hover:text-white transition-all duration-300'>
-                <Link className='relative w-full py-4 md:px-2 lg:py-4 text-center' href={item.link}>
-                    {item.name}
-                </Link>
-                <ul className='absolute w-[280px] top-12 md:top-20 z-10 hidden !bg-slate-100 shadow-md rounded-sm group-hover:block group-hover:bg-white group-hover:text-gray-800'>
-                    {item.dropdownItems?.map((dropddownItem, index) => (
-                        <li key={index} className='text-slate-800 hover:bg-slate-800 hover:text-white'>
-                            <Link
-                                className='block px-8 py-4 w-full'
-                                href={dropddownItem.itemLink}>{dropddownItem.itemName}</Link></li>
-                    ))}
-                </ul>
-            </li>
-        ));
-        return (    
-            <ul className='flex flex-col justify-center items-center gap-1 px-0 bg-white text-green-600 md:flex-row md:justify-center md:items-center md:h-full md:text-white md:bg-transparent md:gap-0 shadow-md'>
-                {listItems}
-            </ul>
-        );
+    const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+    const closeMenu = () => {
+        setIsMobileMenuOpen(false);
+        setActiveDropdownIndex(null);
     };
 
-    // Social media contents component
-    const SocialContents: React.FC = () => {
-        const socialLinkItems = socialIcons.map((item, index) => (
-            <li key={index} className='hidden lg:flex items-center'>
-                <Link href={item.link} className='text-white hover:text-green-500'>
-                    {item.icon}
-                </Link>
-            </li>
-        ));
-        return (
-            <ul className='hidden md:flex items-center md:gap-3 lg:gap-4'>
-                {socialLinkItems}
-            </ul>
-        );
+    const toggleDropdown = (idx: any) => {
+        setActiveDropdownIndex((prev) => (prev === idx ? null : idx));
     };
+
+    const navItems = [
+        { name: "Home", path: "/" },
+        {
+            name: "OUR SERVICES",
+            subItems: [
+                { name: "Digital Marketing", path: "/ourServices/digitalMarketing" },
+                { name: "Web Designing", path: "/ourServices/webDesigning" },
+                { name: "Web Development", path: "/ourServices/webDevelopment" },
+                { name: "App Development", path: "/ourServices/appDevelopment" },
+                { name: "Graphics Designing", path: "/ourServices/graphicsDesigning" },
+                { name: "Video Editing", path: "/ourServices/videoEditing" }
+            ]
+        },
+        { name: "BLOG", path: "/blog" },
+        { name: "PORTFOLIO", path: "/portfolio" },
+        { name: "ABOUT US", path: "/about" },
+        { name: "CONTACT US", path: "/contact" }
+    ];
 
     return (
-        <main>
-            <section className={`fixed top-0 left-0 right-0 z-50 min-w-[460px] transition-colors duration-300 ease-in-out ${isMenuOpen || isScrolled ? 'bg-black shadow-lg' : 'bg-transparent'}`}>
-                <div className='relative z-40 flex gap-8 h-[86px] w-full px-10 items-center justify-between'>
-                    <Link href='/' className="relative z-40 object-contain">
-                        <Image
-                            className="object-contain max-w-[150px]"
-                            src="/images/logo.png"
-                            alt="UFOCube logo"
-                            width={240}
-                            height={38}
-                            priority
-                        />
-                    </Link>
+        <header className={`fixed top-0 left-0 w-full h-16 lg:h-[85px] z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen ? 'bg-black' : 'bg-transparent'}`}>
+            <div className="flex items-center justify-between px-4 md:px-8 lg:h-20 text-[13px]">
+                <div className="flex items-center md:pt-2">
+                    <img src="./images/logo.png" alt="UFOcube Logo" className="w-[150px] md:w-[200px]" />
+                </div>
 
-                    {/* ---------- This is height sapcing of navabe for hero section ------------- */}
+                {/* Desktop Nav */}
+                <nav
+                    className={`${isNavVisible ? "scale-100 opacity-100" : "scale-50 opacity-0"
+                        } hidden lg:flex gap-6 text-white font-semibold h-16 mr-4 relative transform transition-all duration-700 ease-out`}
+                >
+                    {navItems.map((item, idx) => (
+                        <div key={idx} className="relative flex items-center px-4 h-full cursor-pointer group">
+                            {item.subItems ? (
+                                <span className="z-10 lg:text-[12px]">{item.name}</span>
+                            ) : (
+                                <Link
+                                    href={item.path}
+                                    // className={ `z-10 lg:text-[12px] px-2 py-1 ${pathname === item.path ? 'bg-green-800 text-white rounded-md' : ''}`}
+                                    className={`z-10 lg:text-[12px] px-2 py-1 ${pathname === item.path ? 'bg-green-800 text-white rounded-md' : ''}`}
+                                >
+                                    {item.name}
+                                </Link>
+                            )}
+                            <div className="absolute inset-0 bg-green-800 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
 
-                    <div className=' absolute top-0 left-0 right-0 bottom-0 z-30'></div>
-
-                    {/* ---------- Adjusted NavbarContents positioning and z-index ------------- */}
-
-                    <div className={`absolute top-full left-0 z-10 w-full pb-10 transform transition-all duration-300 ease-in-out opacity-0 ${!isMenuOpen ? '-translate-y-full opacity-0 md:opacity-100 md:translate-y-0' : 'translate-y-0 opacity-100'} md:relative md:top-0 md:z-40 md:justify-center md:items-center md:h-full md:w-auto md:pb-0 md:text-xs md:px-1 xl:px-8 xl:text-[0.9rem]`}>
-                        <NavbarContents />
-                    </div>
-
-                    {/* Social links */}
-
-                    <div className='relative z-40 hidden lg:block'>
-                        <SocialContents />
-                    </div>
-
-                    {/* Menu button */}
-                    <div className='relative z-40 cursor-pointer md:hidden' onClick={handleMenuOpen}>
-                        <div className='block relative w-12 h-12'>
-                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "rotate-45 translate-y-[0px]" : ""}`}></span>
-                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[0px] transition-opacity duration-300 ease-in-out ${isMenuOpen ? "opacity-0" : ""}`}></span>
-                            <span className={`w-[28px] h-[3px] bg-white rounded-sm absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[10px] transition-transform duration-300 ease-in-out ${isMenuOpen ? "-rotate-45 translate-y-[-0px]" : ""}`}></span>
+                            {/* Dropdown */}
+                            {item.subItems && (
+                                <div className="absolute top-full left-0 bg-white text-black rounded shadow-lg z-50 w-[300px] transform transition-all duration-300 ease-in-out origin-top scale-y-0 opacity-0 max-h-0 overflow-hidden group-hover:scale-y-100 group-hover:opacity-100 group-hover:max-h-screen">
+                                    {item.subItems.map((subItem, subIdx) => (
+                                        <Link
+                                            key={subIdx}
+                                            href={subItem.path}
+                                            className={
+                                                `block px-4 py-2 text-slate-800 hover:bg-slate-800 hover:text-white ${pathname === item.path ? 'bg-green-700 text-white' : ''}`
+                                            }
+                                        >
+                                            {subItem.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                         </div>
+                    ))}
+                </nav>
+
+                {/* Desktop Social Icons */}
+                <div className="hidden lg:flex gap-4 text-[27px] text-black">
+                    <a href="https://www.facebook.com/ufocube" target="_blank" rel="noopener noreferrer">
+                        <FaFacebook className="bg-slate-300 hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://www.instagram.com/ufocube03" target="_blank" rel="noopener noreferrer">
+                        <FaInstagram className="bg-slate-300 hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://www.youtube.com/@ufocube3" target="_blank" rel="noopener noreferrer">
+                        <FaYoutube className="bg-slate-300 hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://x.com/ufocube03" target="_blank" rel="noopener noreferrer">
+                        <FaTwitter className="bg-slate-300 hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://x.com/ufocube03" target="_blank" rel="noopener noreferrer">
+                        <FaLinkedin className="bg-slate-300 hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                </div>
+
+
+                {/* Mobile Toggle */}
+                <div className={`lg:hidden p-2 rounded-md transition-all duration-300 ${isMobileMenuOpen ? 'bg-black' : 'bg-transparent'}`}>
+                    <div
+                        className={`text-white text-3xl cursor-pointer transition-transform duration-500 ${isMobileMenuOpen ? 'rotate-180' : 'rotate-0'}`}
+                        onClick={toggleMenu}
+                    >
+                        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
                     </div>
                 </div>
-            </section>
-        </main>
+            </div>
+
+            {/* Mobile & Tablet Menu */}
+            <div
+                className={`lg:hidden bg-black text-white px-6 py-6 space-y-4 transition-all duration-300 ease-in-out origin-top
+                ${isMobileMenuOpen ? 'opacity-100 scale-y-100 max-h-screen' : 'opacity-0 scale-y-95 max-h-0 overflow-hidden'}
+                `}
+            >
+                {navItems.map((item, idx) => (
+                    <div key={idx} className="relative">
+                        <div
+                            className="hover:bg-green-800 cursor-pointer border-b border-gray-700 pb-2 rounded-md p-1 flex justify-between items-center"
+                            onClick={() => {
+                                if (item.subItems) {
+                                    toggleDropdown(idx);
+                                } else {
+                                    closeMenu();
+                                }
+                            }}
+                        >
+                            {item.subItems ? (
+                                <span>{item.name}</span>
+                            ) : (
+                                <Link
+                                    href={item.path || "#"}
+                                    onClick={() => {
+                                        if (item.subItems) {
+                                            toggleDropdown(idx);
+                                        } else {
+                                            closeMenu();
+                                        }
+                                    }}
+                                    className={
+                                        `flex justify-between items-center w-full ${pathname === item.path ? 'bg-green-700 text-white px-2 py-1 rounded-md' : ''}`
+                                    }
+                                >
+                                    {item.name}
+                                    {item.subItems && (
+                                        <span className="ml-auto">{activeDropdownIndex === idx ? "▲" : "▼"}</span>
+                                    )}
+                                </Link>
+
+                            )}
+                            {item.subItems && (
+                                <span className="ml-auto">{activeDropdownIndex === idx ? "▲" : "▼"}</span>
+                            )}
+                        </div>
+
+                        {/* Mobile Dropdown */}
+                        {item.subItems && (
+                            <div className={`w-full bg-white text-black rounded-md mt-1 overflow-hidden shadow-md transform transition-all duration-300 ease-in-out origin-top
+                                ${activeDropdownIndex === idx ? "scale-y-100 opacity-100 max-h-[500px]" : "scale-y-95 opacity-0 max-h-0"}
+                            `}>
+                                {item.subItems.map((subItem, subIdx) => (
+                                    <Link
+                                        key={subIdx}
+                                        href={subItem.path}
+                                        onClick={closeMenu}
+                                        className={
+                                            `block px-4 py-3 text-slate-800 hover:bg-slate-800 hover:text-white border-b border-gray-200 cursor-pointer ${pathname === item.path ? 'bg-green-700 text-white' : ''}`
+                                        }
+                                    >
+                                        {subItem.name}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
+
+                {/* Mobile Social Icons */}
+                <div className="flex justify-center gap-4 pt-4 text-[22px]">
+                    <a href="https://www.facebook.com/ufocube" target="_blank" rel="noopener noreferrer">
+                        <FaFacebook className="bg-slate-300 text-black hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://www.instagram.com/ufocube03" target="_blank" rel="noopener noreferrer">
+                        <FaInstagram className="bg-slate-300 text-black hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://www.youtube.com/@ufocube3" target="_blank" rel="noopener noreferrer">
+                        <FaYoutube className="bg-slate-300 text-black hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://x.com/ufocube03" target="_blank" rel="noopener noreferrer">
+                        <FaTwitter className="bg-slate-300 text-black hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                    <a href="https://x.com/ufocube03" target="_blank" rel="noopener noreferrer">
+                        <FaLinkedin className="bg-slate-300 text-black hover:cursor-pointer hover:bg-green-600 p-1 rounded-full transition-all" />
+                    </a>
+                </div>
+
+            </div>
+        </header>
     );
 };
 
